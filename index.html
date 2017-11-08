@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hypercube's Home</title>
+<script type="text/javascript">
+function fill(td, command)
+{
+    var target = document.getElementById("cell-" + td);
+    var color = command.split(" ")[0];
+    var timestamp = parseFloat(command.split(" ")[1]);
+    var currentTimestamp = parseFloat(target.dataset.timestamp);
+    //if (timestamp >= currentTimestamp)
+    //{
+        if (color == "0") target.style.backgroundColor = "#fff";
+        else if (color == "1") target.style.backgroundColor = "#ddd";
+        else if (color == "2") target.style.backgroundColor = "#aaa";
+        else if (color == "3") target.style.backgroundColor = "#777";
+        target.dataset.timestamp = timestamp;
+    //}
+}
+
+function getXMLHttpRequest()
+{
+    var xmlHttp = null;
+    try {
+       xmlHttp = new XMLHttpRequest();
+    }
+    catch (e) {
+      try {
+        xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+      }
+      catch (e) {
+        xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+      }
+    }
+    return xmlHttp;
+}
+
+function toggle(td)
+{
+      var xmlhttp = getXMLHttpRequest();
+      xmlhttp.open("POST", "http://115.159.152.249:10080/toggle/" + td, true);
+      xmlhttp.send("");
+}
+
+function fresh() {
+    var xmlhttp = getXMLHttpRequest();
+    xmlhttp.open("GET", "http://115.159.152.249:10080/state");
+    xmlhttp.onreadystatechange = function() {
+        if(xmlhttp.readyState == 4){
+            if(xmlhttp.status == 200){
+                freshGrid(xmlhttp.responseText);
+            }
+        }
+    }
+    xmlhttp.send();
+}
+
+function freshGrid(data)
+{
+    timestamp = data.split("#")[1];
+    for(var i = 0; i < 256; i++)
+        fill(i, data.charAt(i) + " " + timestamp);
+    //window.clearInterval(loadingTimer);
+}
+
+function loading()
+{
+    if (loadingGrid == 0) {
+      fill(0, "3 0");
+      loadingGrid = 1;
+    }
+    else {
+      for(var i = 0; i <= loadingGrid; i++)
+      fill(i * 15 + loadingGrid, "3 0");
+      for (var i = 0; i < loadingGrid; i++)
+      fill(i * 15 + loadingGrid - 1, "2 0");
+      for (var i = 0; i < loadingGrid - 1; i++)
+      fill(i * 15 + loadingGrid - 2, "0 0");
+      loadingGrid = loadingGrid + 1;
+      if (loadingGrid > 256) loadingGrid = 1;
+    }
+}
+</script>
+<style type="text/css">
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #fff;
+}
+:focus { outline: 0; }
+a { text-decoration: none; }
+#container {
+    width: 100vmin;
+    margin: 5vmin auto;
+}
+img {
+    width: 20vmin;
+    margin-left: 5vmin;
+}
+h1 {
+    display: inline-block;
+    font-size: 8vmin;
+    font-weight: normal;
+    position: relative;
+    top: -3vmin;
+    left: 5vmin;
+    margin: 0;
+    color: #222;
+}
+nav {
+    float: left;
+    width: 20vmin;
+    margin-left: 5vmin;
+}
+hr {
+    margin: 2vmin;
+    border: none;
+}
+a {
+    display: block;
+    font-size: 3vmin;
+    margin: 0;
+    padding: 1vmin;
+    color: #222;
+}
+a:hover { color: #ccc; }
+#wireworld {
+    float: left;
+    width: 70vmin;
+}
+.wireworld-cell {
+    display: inline-block;
+    height: 3.375vmin;
+    width: 3.375vmin;
+    margin: 0.5vmin;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+<div id="container">
+  <header>
+    <img src="hypercube.png" alt="Hypercube" />
+    <h1>Hypercube</h1>
+  </header>
+  <nav>
+    <hr />
+    <a href="https://article.0x01.me/">Articles</a>
+    <a href="https://comic.0x01.me/">Comics</a>
+    <a href="/about">About me</a>
+    <a href="https://status.0x01.me/">Calendar</a>
+    <a href="https://book.0x01.me/">Book me</a>
+    <hr />
+    <a href="https://github.com/Smart-Hypercube">Projects</a>
+    <a href="http://mirrors.asia/">Mirrors</a>
+    <a href="http://file.0x01.me/">File</a>
+    <a href="https://leetcode.0x01.me/">Leetcode</a>
+    <a href="https://ustc.life/">USTC Life</a>
+  </nav>
+  <div id="wireworld">
+    <script type="text/javascript">
+for (var i = 0; i < 256; i++) {
+    document.write("<div id=\"cell-" + i.toString() + "\" class=\"wireworld-cell\" onclick=\"toggle(" + i.toString() + ")\">&nbsp;</div>");
+}
+//var loadingGrid = 0;
+//var loadingTimer = window.setInterval("loading()", 100);
+var eventTimer = window.setInterval("fresh()", 500);
+//var evtSource = new EventSource("http://wireworld.0x01.me/state");
+//evtSource.onmessage = function(e) {
+//    freshGrid(e.data.split("\n").join(""));
+//}
+    </script>
+  </div>
+</div>
+</body>
+</html>
