@@ -1,12 +1,13 @@
 body {
     margin: 0;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     background-color: #fff;
 }
 :focus { outline: 0; }
 a {
     text-decoration: none;
     color: #444;
+    word-wrap: nowrap;
 }
 img { width: 100%; }
 #container {
