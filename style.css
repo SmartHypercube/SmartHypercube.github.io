@@ -42,9 +42,9 @@ nav a {
     font-size: 3vmin;
     margin: 0;
     padding: 1vmin;
-    color: #222;
+    color: #aaa;
 }
-nav a:hover, .fade { color: #ccc; }
+nav a:hover, .fade { color: #444; }
 #wireworld, #about {
     float: left;
     width: 70vmin;
@@ -53,6 +53,7 @@ nav a:hover, .fade { color: #ccc; }
     display: inline-block;
     height: 3.375vmin;
     width: 3.375vmin;
+    border-radius: 5vmin;
     font-size: 3.375vmin;
     line-height: 3.375vmin;
     margin: 0.5vmin;
@@ -64,7 +65,7 @@ nav a:hover, .fade { color: #ccc; }
     line-height: 2;
     color: #444;
 }
-#about div.fade { color: #ccc; }
+#about div.fade { color: #ddd; }
 .x12 { width: 100%; }
 .x6 { width: 48%; }
 .x4 { width: 32%; }
