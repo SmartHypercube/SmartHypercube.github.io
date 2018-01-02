@@ -44,7 +44,7 @@ nav a {
     padding: 1vmin;
     color: #aaa;
 }
-nav a:hover, .fade { color: #dd4; }
+nav a:hover, .fade { color: #444; }
 #wireworld, #about {
     float: left;
     width: 70vmin;
