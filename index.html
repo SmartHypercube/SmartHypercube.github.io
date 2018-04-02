@@ -5,11 +5,63 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Hypercube's Home</title>
+<link rel="stylesheet" href="style.css" />
+<script type="text/javascript">
+function getXMLHttpRequest() {
+    var xmlHttp = null;
+    try { xmlHttp = new XMLHttpRequest(); }
+    catch (e) {
+        try { xmlHttp = new ActiveXObject("Msxml2.XMLHTTP"); }
+        catch (e) { xmlHttp = new ActiveXObject("Microsoft.XMLHTTP"); }
+    }
+    return xmlHttp;
+}
+var cs = {0: "#fff", 1: "#ddd", 2: "#aaa", 3: "#777", 4: "#444"};
+function toggle(i) {
+    var xmlhttp = getXMLHttpRequest();
+    xmlhttp.open("POST", "http://115.159.152.249:10080/toggle/" + i, true);
+    xmlhttp.send("");
+}
+function fresh() {
+    var xmlhttp = getXMLHttpRequest();
+    xmlhttp.open("GET", "http://115.159.152.249:10080/state");
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4)
+            if (xmlhttp.status == 200)
+                for (var i = 0; i < 256; i++)
+                    document.getElementById("cell-" + i).style.backgroundColor = cs[xmlhttp.responseText.charAt(i)];
+    }
+    xmlhttp.send();
+}
+</script>
 </head>
 
 <body>
-    <h1>Sorry</h1>
+<div id="container">
+  <header>
+    <img src="hypercube.png" alt="Hypercube" />
+    <h1>Hypercube</h1>
+  </header>
+  <nav>
     <hr />
-    <p>This content is not available in your country yet.</p>
+    <a href="https://article.0x01.me/">Articles</a>
+    <a href="https://comic.0x01.me/">Comics</a>
+    <a href="/about">About me</a>
+    <a href="https://status.0x01.me/">Calendar</a>
+    <a href="https://book.0x01.me/">Book me</a>
+    <hr />
+    <a href="https://github.com/Smart-Hypercube">Projects</a>
+    <a href="http://mirrors.asia/">Mirrors</a>
+    <a href="http://leetcode.0x01.me/">Leetcode</a>
+    <a href="https://ustc.life/">USTC Life</a>
+  </nav>
+  <div id="wireworld">
+    <script type="text/javascript">
+for (var i = 0; i < 256; i++)
+    document.write("<div id=\"cell-" + i.toString() + "\" class=\"wireworld-cell\" onclick=\"toggle(" + i.toString() + ")\">&nbsp;</div>");
+var eventTimer = window.setInterval("fresh()", 500);
+    </script>
+  </div>
+</div>
 </body>
 </html>
