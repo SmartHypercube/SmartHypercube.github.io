@@ -1,67 +1,201 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hypercube's Home</title>
-<link rel="stylesheet" href="style.css" />
-<script type="text/javascript">
-function getXMLHttpRequest() {
-    var xmlHttp = null;
-    try { xmlHttp = new XMLHttpRequest(); }
-    catch (e) {
-        try { xmlHttp = new ActiveXObject("Msxml2.XMLHTTP"); }
-        catch (e) { xmlHttp = new ActiveXObject("Microsoft.XMLHTTP"); }
-    }
-    return xmlHttp;
-}
-var cs = {0: "#fff", 1: "#ddd", 2: "#aaa", 3: "#777", 4: "#444"};
-function toggle(i) {
-    var xmlhttp = getXMLHttpRequest();
-    xmlhttp.open("POST", "http://115.159.152.249:10080/toggle/" + i, true);
-    xmlhttp.send("");
-}
-function fresh() {
-    var xmlhttp = getXMLHttpRequest();
-    xmlhttp.open("GET", "http://115.159.152.249:10080/state");
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4)
-            if (xmlhttp.status == 200)
-                for (var i = 0; i < 256; i++)
-                    document.getElementById("cell-" + i).style.backgroundColor = cs[xmlhttp.responseText.charAt(i)];
-    }
-    xmlhttp.send();
-}
-</script>
-</head>
-
-<body>
-<div id="container">
-  <header>
-    <img src="hypercube.png" alt="Hypercube" />
-    <h1>Hypercube</h1>
-  </header>
-  <nav>
-    <hr />
-    <a href="https://article.0x01.me/">Articles</a>
-    <a href="https://comic.0x01.me/">Comics</a>
-    <a href="/about">About me</a>
-    <a href="https://status.0x01.me/">Calendar</a>
-    <a href="https://book.0x01.me/">Book me</a>
-    <hr />
-    <a href="https://github.com/Smart-Hypercube">Projects</a>
-    <a href="http://mirrors.asia/">Mirrors</a>
-    <a href="http://leetcode.0x01.me/">Leetcode</a>
-    <a href="https://ustc.life/">USTC Life</a>
-  </nav>
-  <div id="wireworld">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Hypercube's Home</title>
+    <link rel="icon" href="/hypercube.png">
+    <base target="_blank">
+    <link rel="stylesheet" href="normalize.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            height: 100vmin;
+            width: 100vmin;
+            margin: 0 auto;
+            padding: 5vmin 10vmin 0;
+            font-family: Arial, sans-serif;
+            font-size: 2vmin;
+            line-height: 1.5;
+            background-color: #fff;
+            color: #444;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        a:hover {
+            color: #888;
+        }
+        p {
+            margin-top: 0;
+        }
+        #overlay {
+            position: absolute;
+            height: 49.2308vmin;
+            width: 80vmin;
+            padding-top: 6.15385vmin;
+            padding-left: 40vmin;
+            background-color: #fff;
+            opacity: .9;
+        }
+        #overlay img {
+            position: absolute;
+            top: 6.15385vmin;
+            left: 9.23077vmin;
+            height: 24.6154vmin;
+        }
+        #overlay a {
+            text-decoration: underline;
+        }
+        .fade {
+            color: #ccc;
+        }
+        #game {
+            background-color: #aaa;
+        }
+        #game div {
+            width: 3.84615%;
+            padding-top: calc(3.84615% - 2px);
+            float: left;
+            border: 1px solid #fff;
+        }
+        #game div:hover {
+            /*opacity: .8;*/
+        }
+        #game:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        h1 {
+            display: inline-block;
+            margin: 0;
+            font-size: 1em;
+            color: #08c;
+            cursor: pointer;
+        }
+        h1:hover {
+            color: #4cf;
+        }
+        ul {
+            display: inline-block;
+            float: right;
+            margin: 0;
+        }
+        li {
+            display: inline-block;
+            margin-left: 1em;
+        }
+    </style>
     <script type="text/javascript">
-for (var i = 0; i < 256; i++)
-    document.write("<div id=\"cell-" + i.toString() + "\" class=\"wireworld-cell\" onclick=\"toggle(" + i.toString() + ")\">&nbsp;</div>");
-var eventTimer = window.setInterval("fresh()", 500);
+        function getXMLHttpRequest() {
+            let xmlHttp = null;
+            try { xmlHttp = new XMLHttpRequest(); }
+            catch (e) {
+                try { xmlHttp = new ActiveXObject('Msxml2.XMLHTTP'); }
+                catch (e) { xmlHttp = new ActiveXObject('Microsoft.XMLHTTP'); }
+            }
+            return xmlHttp;
+        }
+        let overlay = false;
+        function toggle() {
+            overlay = !overlay;
+            document.getElementById('overlay').style.display = overlay ? 'block' : 'none';
+        }
+        let game_data = [];
+        for (let i = 0; i < 16; i++) {
+            let row = [];
+            for (let j = 0; j < 26; j++)
+                row.push(Math.random() > .8);
+            game_data.push(row);
+        }
+        function game_toggle(i, j) {
+            let x = i;
+            let y = j - 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            y = j;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            y = j + 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            y = j;
+            x = i - 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            x = i + 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            game_update(game_data);
+            return;
+            let xmlHttp = getXMLHttpRequest();
+            xmlHttp.open('POST', 'http://115.159.152.249:10080/toggle/' + i, true);
+            xmlHttp.send('');
+        }
+        function game_update(data) {
+            for (let i = 0; i < 16; i++)
+                for (let j = 0; j < 26; j++) {
+                    let e = document.getElementById('cell-' + i + '-' + j);
+                    if (Math.abs(i - game_hover_x) + Math.abs(j - game_hover_y) > 1)
+                        e.style.backgroundColor = data[i][j] ? '#444' : '#fff';
+                    else
+                        e.style.backgroundColor = data[i][j] ? '#555' : '#eee';
+                }
+        }
+        function game_refresh() {
+            game_update('1'.repeat(100) + '0'.repeat(100) + '1'.repeat(1000));
+            return;
+            let xmlHttp = getXMLHttpRequest();
+            xmlHttp.open('GET', 'http://115.159.152.249:10080/state');
+            xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
+                    game_update(xmlHttp.responseText);
+            };
+            xmlHttp.send();
+        }
+        let game_hover_x = -1;
+        let game_hover_y = -1;
+        function game_hover(i, j) {
+            game_hover_x = i;
+            game_hover_y = j;
+            game_update(game_data);
+        }
     </script>
-  </div>
+</head>
+<body>
+<div id="overlay" style="display: none">
+    <img src="hypercube.png" alt="Hypercube">
+    <p>
+        Zibo Wang,<br>
+        <a href="https://www.ustc.edu.cn/">USTC</a> undergraduate,<br>
+        <a href="https://www.msra.cn/">MSRA</a> research intern.<br>
+        More on <a href="https://www.linkedin.com/in/zbwang">LinkedIn</a>.
+    </p>
+    <p>
+        E-mail: <a href="mailto:hypercube@0x01.me">hypercube@0x01.me</a><br>
+        Telegram: <a href="https://t.me/SmartHypercube">@SmartHypercube</a><br>
+        GitHub: <a href="https://github.com/Smart-Hypercube">Smart-Hypercube</a><br>
+        Steam: <a href="https://steamcommunity.com/id/SmartHypercube">SmartHypercube</a><br>
+        <span class="fade">WeChat: FasdSnake (deprecated)</span><br>
+    </p>
 </div>
+<div id="game" onmouseout="game_hover(-1, -1)">
+    <script type="text/javascript">
+        for (let i = 0; i < 16; i++)
+            for (let j = 0; j < 26; j++)
+                document.write('<div id="cell-'+i+'-'+j+'" ' +
+                    'onclick="game_toggle('+i+','+j+')" ' +
+                    'onmouseover="game_hover('+i+','+j+')"></div>');
+        // window.setInterval('game_refresh()', 500);
+        game_update(game_data);
+    </script>
+</div>
+<h1 onclick="toggle()">Hypercube</h1>
+<ul>
+    <li><a href="https://ustc.life/">ustc.life</a></li>
+    <li><a href="http://hfs.mirrors.asia/">hfs</a></li>
+    <li><a href="https://hack.lug.ustc.edu.cn/">hackergame</a></li>
+    <li><a href="https://github.com/Smart-Hypercube">more on GitHub</a></li>
+</ul>
 </body>
 </html>
