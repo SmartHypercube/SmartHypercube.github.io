@@ -121,9 +121,9 @@
             x = i + 1;
             if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
             game_update();
-            return;
             let xmlHttp = getXMLHttpRequest();
-            xmlHttp.open('POST', 'http://115.159.152.249:10080/toggle/' + i, true);
+            xmlHttp.open('POST',
+                'https://service-r3t9k6sr-1251965935.ap-shanghai.apigateway.myqcloud.com/release/'+i+'/'+j, true);
             xmlHttp.send('');
         }
         function game_update() {
