@@ -108,19 +108,6 @@
             game_data.push(row);
         }
         function game_toggle(i, j) {
-            let x = i;
-            let y = j - 1;
-            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
-            y = j;
-            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
-            y = j + 1;
-            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
-            y = j;
-            x = i - 1;
-            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
-            x = i + 1;
-            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
-            game_update();
             let xmlHttp = getXMLHttpRequest();
             xmlHttp.open('POST',
                 'https://service-r3t9k6sr-1251965935.ap-shanghai.apigateway.myqcloud.com/release/'+i+'/'+j, true);
@@ -183,7 +170,7 @@
                 document.write('<div id="cell-'+i+'-'+j+'" ' +
                     'onclick="game_toggle('+i+','+j+')" ' +
                     'onmouseover="game_hover('+i+','+j+')"></div>');
-        window.setInterval('game_refresh()', 1000);
+        window.setInterval('game_refresh()', 500);
         game_update(game_data);
     </script>
 </div>
