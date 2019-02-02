@@ -54,17 +54,11 @@
         .fade {
             color: #ccc;
         }
-        #game {
-            background-color: #aaa;
-        }
         #game div {
             width: 3.84615%;
             padding-top: calc(3.84615% - 2px);
             float: left;
             border: 1px solid #fff;
-        }
-        #game div:hover {
-            /*opacity: .8;*/
         }
         #game:after {
             content: '';
@@ -110,7 +104,7 @@
         for (let i = 0; i < 16; i++) {
             let row = [];
             for (let j = 0; j < 26; j++)
-                row.push(Math.random() > .8);
+                row.push(false);
             game_data.push(row);
         }
         function game_toggle(i, j) {
@@ -126,30 +120,33 @@
             if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
             x = i + 1;
             if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
-            game_update(game_data);
+            game_update();
             return;
             let xmlHttp = getXMLHttpRequest();
             xmlHttp.open('POST', 'http://115.159.152.249:10080/toggle/' + i, true);
             xmlHttp.send('');
         }
-        function game_update(data) {
+        function game_update() {
             for (let i = 0; i < 16; i++)
                 for (let j = 0; j < 26; j++) {
                     let e = document.getElementById('cell-' + i + '-' + j);
                     if (Math.abs(i - game_hover_x) + Math.abs(j - game_hover_y) > 1)
-                        e.style.backgroundColor = data[i][j] ? '#444' : '#fff';
+                        e.style.backgroundColor = game_data[i][j] ? '#444' : '#fff';
                     else
-                        e.style.backgroundColor = data[i][j] ? '#555' : '#eee';
+                        e.style.backgroundColor = game_data[i][j] ? '#555' : '#eee';
                 }
         }
         function game_refresh() {
-            game_update('1'.repeat(100) + '0'.repeat(100) + '1'.repeat(1000));
-            return;
             let xmlHttp = getXMLHttpRequest();
-            xmlHttp.open('GET', 'http://115.159.152.249:10080/state');
+            xmlHttp.open('GET', 'https://lightgame-1251965935.cos.ap-shanghai.myqcloud.com/data');
             xmlHttp.onreadystatechange = function() {
-                if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
-                    game_update(xmlHttp.responseText);
+                if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+                    for (let i = 0; i < 16; i++)
+                        for (let j = 0; j < 26; j++) {
+                            game_data[i][j] = xmlHttp.responseText.charAt(i * 27 + j) === '1';
+                        }
+                    game_update();
+                }
             };
             xmlHttp.send();
         }
@@ -158,7 +155,7 @@
         function game_hover(i, j) {
             game_hover_x = i;
             game_hover_y = j;
-            game_update(game_data);
+            game_update();
         }
     </script>
 </head>
@@ -186,7 +183,7 @@
                 document.write('<div id="cell-'+i+'-'+j+'" ' +
                     'onclick="game_toggle('+i+','+j+')" ' +
                     'onmouseover="game_hover('+i+','+j+')"></div>');
-        // window.setInterval('game_refresh()', 500);
+        window.setInterval('game_refresh()', 1000);
         game_update(game_data);
     </script>
 </div>
