@@ -86,15 +86,6 @@
         }
     </style>
     <script>
-        function getXMLHttpRequest() {
-            let xmlHttp = null;
-            try { xmlHttp = new XMLHttpRequest(); }
-            catch (e) {
-                try { xmlHttp = new ActiveXObject('Msxml2.XMLHTTP'); }
-                catch (e) { xmlHttp = new ActiveXObject('Microsoft.XMLHTTP'); }
-            }
-            return xmlHttp;
-        }
         let overlay = false;
         function toggle() {
             overlay = !overlay;
@@ -104,14 +95,23 @@
         for (let i = 0; i < 16; i++) {
             let row = [];
             for (let j = 0; j < 26; j++)
-                row.push(false);
+                row.push(Math.random() > .8);
             game_data.push(row);
         }
         function game_toggle(i, j) {
-            let xmlHttp = getXMLHttpRequest();
-            xmlHttp.open('POST',
-                'https://service-r3t9k6sr-1251965935.ap-shanghai.apigateway.myqcloud.com/release/'+i+'/'+j, true);
-            xmlHttp.send('');
+            let x = i;
+            let y = j - 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            y = j;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            y = j + 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            y = j;
+            x = i - 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            x = i + 1;
+            if (x >= 0 && x < 16 && y >= 0 && y < 26) game_data[x][y] = !game_data[x][y];
+            game_update();
         }
         function game_update() {
             for (let i = 0; i < 16; i++)
@@ -122,20 +122,6 @@
                     else
                         e.style.backgroundColor = game_data[i][j] ? '#555' : '#eee';
                 }
-        }
-        function game_refresh() {
-            let xmlHttp = getXMLHttpRequest();
-            xmlHttp.open('GET', 'https://lightgame-1251965935.cos.ap-shanghai.myqcloud.com/data');
-            xmlHttp.onreadystatechange = function() {
-                if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-                    for (let i = 0; i < 16; i++)
-                        for (let j = 0; j < 26; j++) {
-                            game_data[i][j] = xmlHttp.responseText.charAt(i * 27 + j) === '1';
-                        }
-                    game_update();
-                }
-            };
-            xmlHttp.send();
         }
         let game_hover_x = -1;
         let game_hover_y = -1;
@@ -171,8 +157,7 @@
                 document.write('<div id="cell-'+i+'-'+j+'" ' +
                     'onclick="game_toggle('+i+','+j+')" ' +
                     'onmouseover="game_hover('+i+','+j+')"></div>');
-        window.setInterval('game_refresh()', 500);
-        game_update(game_data);
+        game_update();
     </script>
 </div>
 <h1 onclick="toggle()">Hypercube</h1>
